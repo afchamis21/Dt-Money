@@ -1,0 +1,76 @@
+{
+  "transactions": [
+    {
+      "id": 1,
+      "description": "Desenvolvimento de site",
+      "type": "income",
+      "category": "Venda",
+      "price": 14000,
+      "createdAt": "2022-08-28T21:21:04.222Z"
+    },
+    {
+      "id": 2,
+      "description": "Hambúrguer",
+      "type": "outcome",
+      "category": "Alimentação",
+      "price": 50,
+      "createdAt": "2022-05-26T21:21:04.222Z"
+    },
+    {
+      "category": "Curso",
+      "description": "Ignite",
+      "price": 1800,
+      "type": "outcome",
+      "createdAt": "2022-08-30T20:15:20.897Z",
+      "id": 3
+    },
+    {
+      "category": "Transação Bancaria",
+      "description": "Pix",
+      "price": 20000,
+      "type": "income",
+      "createdAt": "2022-08-30T20:16:20.429Z",
+      "id": 4
+    },
+    {
+      "category": "Programação",
+      "description": "Desenvolvimento de App",
+      "price": 3500,
+      "type": "income",
+      "createdAt": "2022-08-30T20:29:58.144Z",
+      "id": 5
+    },
+    {
+      "category": "Alimentação",
+      "description": "Pizza",
+      "price": 45,
+      "type": "outcome",
+      "createdAt": "2022-08-30T20:50:15.280Z",
+      "id": 6
+    },
+    {
+      "category": "Gaming",
+      "description": "RP",
+      "price": 50,
+      "type": "outcome",
+      "createdAt": "2022-08-30T21:32:27.131Z",
+      "id": 7
+    },
+    {
+      "category": "Programação",
+      "description": "Desenvolvimento de App",
+      "price": 5000,
+      "type": "income",
+      "createdAt": "2022-08-31T12:23:22.096Z",
+      "id": 8
+    },
+    {
+      "category": "Dinheiro",
+      "description": "Transação",
+      "price": 20000,
+      "type": "income",
+      "createdAt": "2022-09-02T21:05:52.727Z",
+      "id": 9
+    }
+  ]
+}
