@@ -11,7 +11,9 @@ Front-end em ReactJS na pasta web
   <li>Express</li>
   <li>Prisma</li>
   <li>ReactJS</li>  
-  <li>styled-components</li>  
+  <li>Styled Components</li>  
+  <li>Radix UI</li>  
+  <li>React Hook Form</li>  
 </ul>
 
 ## Back-end
