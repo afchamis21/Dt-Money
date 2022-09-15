@@ -5,6 +5,15 @@ Back-end em node.js com express utilizando o prisma orm na pasta server
 
 Front-end em ReactJS na pasta web
 
+### Techs:
+<ul>
+  <li>Node.js</li>
+  <li>Express</li>
+  <li>Prisma</li>
+  <li>ReactJS</li>  
+  <li>styled-components</li>  
+</ul>
+
 ## Back-end
 
 Rotas:
