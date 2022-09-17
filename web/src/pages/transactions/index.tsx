@@ -16,25 +16,25 @@ import { useState } from 'react'
 
 export function Transactions() {
   const [currentPage, setCurrentPage] = useState(1)
-  const { transactions, numberOfPages } = useContextSelector(
+  const { transactions, numberOfPages, fetchTransactions } = useContextSelector(
     TransactionsContext,
     (context) => {
-      const { transactions, numberOfPages } = context
-      return { transactions, numberOfPages }
+      const { transactions, numberOfPages, fetchTransactions } = context
+      return { transactions, numberOfPages, fetchTransactions }
     },
   )
 
   function handlePageIncrease() {
+    const nextPage = currentPage + 1
+    fetchTransactions('', nextPage)
     setCurrentPage((state) => state + 1)
   }
 
   function handlePageDecrease() {
+    const nextPage = currentPage - 1
+    fetchTransactions('', nextPage)
     setCurrentPage((state) => state - 1)
   }
-
-  const transactionsInCurrentPage = transactions.filter((_, index) => {
-    return !(index < (currentPage - 1) * 6) && !(index >= currentPage * 6)
-  })
 
   return (
     <div>
@@ -47,7 +47,7 @@ export function Transactions() {
           <>
             <TransactionsTable>
               <tbody>
-                {transactionsInCurrentPage.map((transaction) => {
+                {transactions.map((transaction) => {
                   return (
                     <tr key={transaction?.id}>
                       <td width="50%">{transaction?.description}</td>
@@ -67,7 +67,7 @@ export function Transactions() {
                 })}
               </tbody>
             </TransactionsTable>
-            {numberOfPages > 1 ?? (
+            {numberOfPages > 1 && (
               <PageController
                 handlePageIncrease={handlePageIncrease}
                 handlePageDecrease={handlePageDecrease}

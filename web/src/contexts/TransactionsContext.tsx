@@ -18,10 +18,16 @@ interface CreateTransactionInput {
   type: 'income' | 'outcome'
 }
 
+interface TransactionSummary {
+  type: 'income' | 'outcome'
+  price: number
+}
+
 interface TransactionContextType {
   numberOfPages: number
   transactions: Transaction[]
-  fetchTransactions: (query?: string) => Promise<void>
+  transactionSummary: TransactionSummary[]
+  fetchTransactions: (query?: string, _page?: number) => Promise<void>
   createTransaction: (data: CreateTransactionInput) => Promise<void>
 }
 
@@ -34,14 +40,9 @@ interface TransactionsProviderProps {
 export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [numberOfPages, setNumberOfPages] = useState(0)
-
-  const getLastPage = (links: string[]) => {
-    const lastLink = links.at(-1)?.split(';')[0]
-    const linkArgs = lastLink?.split('?')[1].split('&')
-    const pageArg = linkArgs?.find((arg) => arg.includes('page='))
-    const pageNumber = pageArg?.split('=').at(-1)
-    return Number(pageNumber)
-  }
+  const [transactionSummary, setTransactionSummary] = useState<
+    TransactionSummary[]
+  >([])
 
   const fetchTransactions = useCallback(async (query?: string, page = 1) => {
     const response = await api.get('/transactions', {
@@ -53,9 +54,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         q: query,
       },
     })
-    const lastPage = response.headers.link
-      ? getLastPage(response.headers.link.split(','))
-      : numberOfPages
+    const lastPage = response.data.amountOfPages
 
     setNumberOfPages((state) => {
       if (state !== lastPage) {
@@ -64,7 +63,18 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         return state
       }
     })
-    setTransactions(response.data)
+
+    const summary = response.data.transactionSummary
+
+    setTransactionSummary((state) => {
+      if (state !== summary) {
+        return summary
+      } else {
+        return state
+      }
+    })
+
+    setTransactions(response.data.transactions)
   }, [])
 
   useEffect(() => {
@@ -80,7 +90,6 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         description,
         price,
         type,
-        createdAt: new Date(),
       })
 
       setTransactions((state) => [response.data, ...state])
@@ -93,6 +102,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
       value={{
         transactions,
         numberOfPages,
+        transactionSummary,
         fetchTransactions,
         createTransaction,
       }}

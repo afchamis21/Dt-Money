@@ -27,6 +27,12 @@ Rotas:
       <li>
         Get
         <p>Retorna a listagem completa das transações</p>
+        <p>Pode receber os seguintes query params, que são opcionais:</p>
+        <ul>
+          <li>q: deve ser passado com um string para pesquisa-lo no db e retornar apenas as transações que o contenham</li>
+          <li>_sort e _order: _sort pode conter os seguintes valores: id, description, type, category, price ou createdAt para ordenar os dados pelo valor passado, e _order deve conter "asc" ou "desc" para indicar a ordem de ordenação. Devem ser passados em conjunto</li>
+          <li>_page e _limit: são passados para paginação, _limit deve conter o tamanho de cada página e _page a página alvo (1,2,3,4...). Devem ser passados em conjunto</li>
+        </ul>
       </li>
       <li>
         Post

@@ -1,12 +1,28 @@
 import { SummaryCard, SummaryContainer } from './styles'
 import { ArrowCircleDown, ArrowCircleUp, CurrencyDollar } from 'phosphor-react'
 import { priceFormatter } from '../../utils/formatter'
-import { useSummary } from '../../hooks/useSummary'
+import { useContextSelector } from 'use-context-selector'
+import { TransactionsContext } from '../../contexts/TransactionsContext'
 
 export function Summary() {
-  const summary = useSummary()
+  const transactionSummary = useContextSelector(
+    TransactionsContext,
+    (context) => {
+      return context.transactionSummary
+    },
+  )
 
-  const isTotalPositive = summary.total >= 0
+  const income = transactionSummary.find((summary) => {
+    return summary.type === 'income'
+  })?.price
+
+  const outcome = transactionSummary.find((summary) => {
+    return summary.type === 'outcome'
+  })?.price
+
+  const total = income! - outcome!
+
+  const isTotalPositive = total >= 0
 
   return (
     <SummaryContainer>
@@ -16,21 +32,21 @@ export function Summary() {
           <ArrowCircleUp size={32} color="#00b37e" />
         </header>
 
-        <strong>{priceFormatter.format(summary.income)}</strong>
+        <strong>{income ? priceFormatter.format(income) : 0}</strong>
       </SummaryCard>
       <SummaryCard>
         <header>
           <span>Saídas</span>
           <ArrowCircleDown size={32} color="#f75a68" />
         </header>
-        <strong>{priceFormatter.format(summary.outcome)}</strong>
+        <strong>{outcome ? priceFormatter.format(outcome) : 0}</strong>
       </SummaryCard>
       <SummaryCard variant={isTotalPositive ? 'positive' : 'negative'}>
         <header>
           <span>Total</span>
           <CurrencyDollar size={32} color="#fff" />
         </header>
-        <strong>{priceFormatter.format(summary.total)}</strong>
+        <strong>{priceFormatter.format(total)}</strong>
       </SummaryCard>
     </SummaryContainer>
   )
