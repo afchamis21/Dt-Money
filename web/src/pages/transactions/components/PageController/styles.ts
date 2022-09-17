@@ -1,7 +1,10 @@
 import styled, { css } from 'styled-components'
 
 export const PageControllerContainer = styled.div`
-  margin-top: 2.5rem;
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;

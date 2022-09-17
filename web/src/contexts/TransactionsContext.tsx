@@ -19,14 +19,14 @@ interface CreateTransactionInput {
 }
 
 interface TransactionSummary {
-  type: 'income' | 'outcome'
-  price: number
+  income: number
+  outcome: number
 }
 
 interface TransactionContextType {
   numberOfPages: number
   transactions: Transaction[]
-  transactionSummary: TransactionSummary[]
+  transactionSummary: TransactionSummary
   fetchTransactions: (query?: string, _page?: number) => Promise<void>
   createTransaction: (data: CreateTransactionInput) => Promise<void>
 }
@@ -40,46 +40,49 @@ interface TransactionsProviderProps {
 export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [numberOfPages, setNumberOfPages] = useState(0)
-  const [transactionSummary, setTransactionSummary] = useState<
-    TransactionSummary[]
-  >([])
+  const [transactionSummary, setTransactionSummary] =
+    useState<TransactionSummary>({ income: 0, outcome: 0 })
+
+  const TRANSACTION_LIMIT_PER_PAGE = 6
 
   const fetchTransactions = useCallback(async (query?: string, page = 1) => {
     const response = await api.get('/transactions', {
       params: {
         _page: page,
-        _limit: 6,
+        _limit: TRANSACTION_LIMIT_PER_PAGE,
         _sort: 'createdAt',
         _order: 'desc',
         q: query,
       },
     })
-    const lastPage = response.data.amountOfPages
-
-    setNumberOfPages((state) => {
-      if (state !== lastPage) {
-        return lastPage
-      } else {
-        return state
-      }
-    })
-
-    const summary = response.data.transactionSummary
-
-    setTransactionSummary((state) => {
-      if (state !== summary) {
-        return summary
-      } else {
-        return state
-      }
-    })
 
     setTransactions(response.data.transactions)
   }, [])
 
+  const fetchAmountOfTransactions = useCallback(async () => {
+    const response = await api.get('/transactions/amount')
+    const amountOfTransactions = response.data.amountOfTransactions
+
+    const numberOfPages = Math.ceil(
+      amountOfTransactions / TRANSACTION_LIMIT_PER_PAGE,
+    )
+
+    setNumberOfPages(numberOfPages)
+  }, [])
+
+  const fetchTransactionSummary = useCallback(async () => {
+    const response = await api.get('/transactions/summary')
+
+    const summary = response.data.transactionSummary
+
+    setTransactionSummary(summary)
+  }, [])
+
   useEffect(() => {
+    fetchTransactionSummary()
     fetchTransactions()
-  }, [fetchTransactions])
+    fetchAmountOfTransactions()
+  }, [fetchAmountOfTransactions, fetchTransactions, fetchTransactionSummary])
 
   const createTransaction = useCallback(
     async (data: CreateTransactionInput) => {
@@ -93,6 +96,19 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
       })
 
       setTransactions((state) => [response.data, ...state])
+      setTransactionSummary((state) => {
+        if (type === 'income') {
+          return {
+            ...state,
+            income: state.income + price,
+          }
+        } else {
+          return {
+            ...state,
+            outcome: state.outcome + price,
+          }
+        }
+      })
     },
     [],
   )
